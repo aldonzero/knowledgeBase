@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>计算机视觉实战演练：算法与应用🌱</title>
+  <title>计算机知识🌱</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 
-  <link rel="shortcut icon" type="image/x-icon" href="#" media="screen" />
+  <link rel="shortcut icon" type="image/x-icon" href="https://docs.github.com/assets/images/site/favicon.png" media="screen" />
   <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
-  
+  <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
 
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css"/>
   <link 
@@ -19,7 +19,15 @@
     type="text/css"
   />
   
-  
+  <!---
+  <!-- Adsense 资源投放 --
+  <script data-ad-client="ca-pub-1890271224952559" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- 谷歌站点收录 --
+  <meta name="google-site-verification" content="qTFCf1hJ275saQ7H1kin5t2DVpznBKAj0Gi50XMOVMo" />
+  <!-- 百度站点收录--
+  <meta name="baidu-site-verification" content="SZyWUIzWiU" />
+  --->
+
   <!-- Google Analytics -->
   <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -93,11 +101,20 @@
   <script src="//cdn.jsdelivr.net/npm/docsify-plugin-carbon@1/index.js"></script>
      
   <script>
-   
+    var gitalkConfig = {
+      clientID: 'c41595e0999dd2834af4',
+      clientSecret: '4ad47f16f60a04c2870a1939406a6ad87bf219ec',
+      accessToken: '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',
+      repo: 'computer-vision-in-action',
+      owner: '',
+      admin: [''],
+      id: location.pathname,      // Ensure uniqueness and length less than 50
+      distractionFreeMode: false // Facebook-like distraction free mode
+    };
      
     window.$docsify = {
       name: '计算机知识',
-     
+      
       loadSidebar: true,
       maxLevel: 4, // 默认情况下会抓取文档中所有标题渲染成目录，可配置最大支持渲染的标题层级。
       subMaxLevel: 2, // 生成目录的最大层级
@@ -111,7 +128,7 @@
       coverpage: true,
       onlyCover: true,
       topMargin: 60,//调整top
-      repo: 'https://github.com/aldonzero/knowledgeBase/',
+      repo: 'https://github.com/aldonzero/knowledgeBase/docs/',
       externalLinkTarget: '_blank', //外链打开方式：_blank表示在新标签页中打开
       search: {
         paths: 'auto',
@@ -146,11 +163,28 @@
               + editHtml
           });
           hook.doneEach(function() {
-            var label_comp, label, domObj, main, divEle;
+            var label_comp, label, domObj, main, divEle, gitalk;
             label_comp = vm.route.path.split("/").pop();
             label = decodeURI(label_comp);
             domObj = Docsify.dom;
             main = domObj.getNode("#main");
+
+            Array.apply(
+              null,
+              document.querySelectorAll("div.gitalk-container")
+            ).forEach(function(ele) {
+              ele.remove();
+            });
+
+            divEle = domObj.create("div");
+            divEle.id = "gitalk-container-" + label;
+            divEle.className = "gitalk-container";
+            divEle.style = "width: " + main.clientWidth + "px; margin: 0 auto 20px;";
+            domObj.appendTo(domObj.find(".content"), divEle);
+            gitalk = new Gitalk(
+              Object.assign(gitalkConfig, { id: !label ? "home" : label })
+            );
+            gitalk.render("gitalk-container-" + label);
           });
         }
       ],
@@ -178,6 +212,9 @@
 
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/external-script.min.js"></script>
   
+  <!-- gitalk 
+  <script src="//unpkg.com/docsify/lib/plugins/gitalk.min.js"></script>-->
+  <script src="//unpkg.com/gitalk/dist/gitalk.min.js"></script>
   
   <!-- 字数统计 -->
   <script src="//unpkg.com/docsify-count/dist/countable.js"></script>
@@ -188,7 +225,31 @@
   <!-- 访问量统计 -->
   <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
   
- 
+<!--   <script>
+    const gitalk = new Gitalk({
+      id: decodeURI('{{ page.url }}'),
+      clientID: 'c41595e0999dd2834af4',
+      clientSecret: '4ad47f16f60a04c2870a1939406a6ad87bf219ec',
+      repo: 'computer-vision-in-action',
+      owner: 'Charmve',
+      admin: ['Charmve'],
+      // 每个网页独立的gitalk
+      //title: location.hash.match(/#(.*?)([?]|$)/)[1],
+      //id: location.hash.match(/#(.*?)([?]|$)/)[1],
+      // facebook-like distraction free mode
+      labels: ['Gitalk'],
+      perPage: 50,
+      distractionFreeMode: false
+    })
+    // 监听URL中hash的变化，如果发现换了一个MD文件，那么刷新页面，解决整个网站使用一个gitalk评论issues的问题。
+    window.onhashchange = function(event){
+      if(event.newURL.split('#')[0] !== event.oldURL.split('#')[0]) {
+        location.reload()
+      }
+    }
+    // 由于docsify/lib/plugins/gitalk.min.js文件中已经有下面代码了，所以不需要在写一次了
+    // gitalk.render('gitalk-container')
+  </script> -->
   
   <!-- alert 样式 -->
   <link rel="stylesheet" href="https://cdn.bootcss.com/sweetalert/1.1.3/sweetalert.min.css" type='text/css' media='all' />
@@ -197,7 +258,7 @@
   <script>
     document.body.oncopy = function () {
      swal("复制成功 🎉",
-          "若要转载或引用请务必保留原文链接，并申明来源。如果你觉得本仓库不错，那就来 <a href=\"https://github.com/aldonzero/knowledgeBase\">GitHub</a> 给个 Star 吧 😊   - by aldonzero",
+          "若要转载或引用请务必保留原文链接，并申明来源。如果你觉得本仓库不错，那就来 <a href=\"https://github.com/Charmve/computer-vision-in-action\">GitHub</a> 给个 Star 吧 😊   - by Charmve",
           "success"); };
   </script>
 
